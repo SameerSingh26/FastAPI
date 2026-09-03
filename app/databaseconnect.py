@@ -1,12 +1,15 @@
 from collections.abc import AsyncGenerator
+import os
 import uuid
 
 from sqlalchemy import Column, String, DateTime, Uuid
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 import datetime
+from dotenv import load_dotenv
 
-Database_URL = "mysql+asyncmy://sql12836400:sG9dfwwHmi@sql12.freesqldatabase.com:3306/sql12836400"
+load_dotenv()
+Database_URL = f"mysql+asyncmy://{os.getenv('SQL_USER')}:{os.getenv('SQL_PASSWORD')}@sql12.freesqldatabase.com:3306/sql12836400"
 
 
 class Base(DeclarativeBase):

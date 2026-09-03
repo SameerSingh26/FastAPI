@@ -24,10 +24,10 @@ class Post(Base):
     __tablename__ = "posts"
 
     id = Column(Uuid, primary_key=True, default=uuid.uuid4)
-    caption = Column(String, nullable=False)
-    url = Column(String, nullable=False)
-    file_type = Column(String, nullable=False)
-    file_name = Column(String, nullable=False)
+    caption = Column(String(255), nullable=False)
+    url = Column(String(2048), nullable=False)
+    file_type = Column(String(100), nullable=False)
+    file_name = Column(String(255), nullable=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
 

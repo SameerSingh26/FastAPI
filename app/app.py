@@ -1,7 +1,17 @@
 from fastapi import FastAPI, HTTPException
 from app.schemas import PostCreate, PostResponse
+from app.databaseconnect import Post, create_database_and_tables, get_async_session
+from sqlalchemy.ext.asyncio import AsyncSession
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await create_database_and_tables()
+    yield 
+
+
+app = FastAPI(lifespan=lifespan)
 
 text_posts={
     1: {"title": "New Post", "content": "cool text post"},
@@ -16,7 +26,7 @@ text_posts={
     10: {"title": "Stay Positive", "content": "keep going and stay positive"}
     }
 
-@app.get("/posts") # @ is generally used in python for calling decorators.
+@app.get("/posts") # @ is generally used in python for calling decorators. 
 def get_all_posts(limit: int = None):
     if limit:
         return list(text_posts.values())[:limit]

@@ -9,7 +9,12 @@ import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
-Database_URL = f"mysql+asyncmy://{os.getenv('SQL_USER')}:{os.getenv('SQL_PASSWORD')}@sql12.freesqldatabase.com:3306/sql12836400"
+database_name = "sql12836400"
+database_host = "sql12.freesqldatabase.com"
+database_port = 3306
+database_user = os.getenv('SQL_USER')
+database_password = os.getenv('SQL_PASSWORD')
+Database_URL = f"mysql+asyncmy://{database_user}:{database_password}@{database_host}:{database_port}/{database_name}"
 
 
 class Base(DeclarativeBase):

@@ -7,6 +7,9 @@ class PostCreate(BaseModel):
     file_type: str
     file_name: str
 
+class PostUpdate(BaseModel):
+    caption: str      
+
 class PostResponse(BaseModel):
     title: str
     content: str

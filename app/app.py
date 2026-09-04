@@ -1,8 +1,8 @@
 import uuid
 
 from fastapi import FastAPI, HTTPException, File , UploadFile, Form, Depends
-from app.schemas import PostCreate, PostResponse
-from app.databaseconnect import Post, create_database_and_tables, get_async_session
+from app.schemas import PostCreate, PostResponse, PostUpdate
+from app.databaseconnect import Post, create_database_and_tables, engine, get_async_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from contextlib import asynccontextmanager
 from sqlalchemy import select
@@ -12,7 +12,8 @@ from sqlalchemy import select
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await create_database_and_tables()
-    yield 
+    yield
+    await engine.dispose()
 
 
 app = FastAPI(lifespan=lifespan)
@@ -55,6 +56,23 @@ async def delete_post(
     await session.delete(post_to_delete)
     await session.commit()
     return {"message": "Post deleted successfully"}
+
+@app.put("/posts/{post_id}")
+async def update_post(
+    post_id: uuid.UUID,
+    post: PostUpdate,
+    session: AsyncSession = Depends(get_async_session)
+):
+    result = await session.execute(select(Post).filter(Post.id == post_id))
+    post_to_update = result.scalars().first()
+    if not post_to_update:
+        raise HTTPException(status_code=404, detail="Post not found")
+    
+    post_to_update.caption = post.caption
+
+    await session.commit()
+    await session.refresh(post_to_update)
+    return post_to_update
 
     
 

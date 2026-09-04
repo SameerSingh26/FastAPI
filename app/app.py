@@ -43,3 +43,22 @@ async def create_post(
     await session.refresh(new_post)
     return new_post
 
+@app.delete("/posts/{post_id}")
+async def delete_post(
+    post_id: uuid.UUID,
+    session: AsyncSession = Depends(get_async_session)
+):
+    result = await session.execute(select(Post).filter(Post.id == post_id))
+    post_to_delete = result.scalars().first()
+    if not post_to_delete:
+        raise HTTPException(status_code=404, detail="Post not found")
+    await session.delete(post_to_delete)
+    await session.commit()
+    return {"message": "Post deleted successfully"}
+
+    
+
+
+
+
+
